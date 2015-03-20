@@ -122,6 +122,25 @@ class Configuration extends AbstractConfiguration
     }
 
     /**
+     * @param null $logPath
+     * @return $this
+     */
+    public function setLogPath($logPath = null)
+    {
+        $this->logPath = $logPath;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLogPath()
+    {
+        return $this->logPath;
+    }
+
+    /**
      * @param $timeout
      * @return $this
      */

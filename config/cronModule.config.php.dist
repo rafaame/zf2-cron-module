@@ -2,10 +2,12 @@
 return [
     'phpPath' => 'php',
     'scriptPath' => '/var/www/application/public/',
+    'logPath' => '/var/www/application/logs/',
     'jobs' => [
         [
             'command' => 'index.php application cron mail',
-            'schedule' => '*/5 * * * *'
+            'schedule' => '*/5 * * * *',
+            'logPrefix' => 'cron/mail/'
         ]
     ],
 

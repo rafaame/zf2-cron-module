@@ -84,9 +84,30 @@ class CronService
         $this->initCron();
         $this->addJobs();
 
-        $this->cron->run();
+        $cronReport = $this->cron->run();
         $this->wait();
         $this->throwErrorIfTimeout();
+
+        foreach($cronReport->getReports() as $key => $report) {
+            $jobConfig = $this->configuration->getJob($key);
+            $logPath = $this->configuration->getLogPath();
+            $logPrefix = $jobConfig['logPrefix'];
+            $logDir = $logPath . $logPrefix;
+            $logFilename = $logDir . (new \Datetime('@' . (int) $report->getStartTime()))->format('Y-m-d');
+
+            if(!file_exists($logDir))
+                throw new \Exception("Directory '$logDir' does not exist.");
+
+            $outputLog = fopen($logFilename . '-output.log', 'a');
+            $errorLog = fopen($logFilename . '-error.log', 'a');
+
+            //@FIXME: include current time in each output/error
+            fwrite($outputLog, implode("\n", $report->getOutput()));
+            fwrite($errorLog, implode("\n", $report->getError()));
+
+            fclose($errorLog);
+            fclose($outputLog);
+        }
     }
 
     protected function initCron()
